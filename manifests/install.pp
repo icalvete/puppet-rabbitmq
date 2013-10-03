@@ -41,7 +41,7 @@ class rabbitmq::install {
         cwd     => '/tmp/',
         command => "/bin/rpm -i ${rabbitmq::repo_resource}",
         require => Common::Down_resource['rabbitmq_get_package'],
-        onlyif  => '/bin/rpm -q rabbitmq-server | grep "not installed"'
+        unless  => '/usr/bin/which rabbitmqctl'
       }
 
     }
