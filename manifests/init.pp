@@ -6,7 +6,8 @@ class rabbitmq (
   $repo_user     = $rabbitmq::params::repo_user,
   $repo_pass     = $rabbitmq::params::repo_pass,
   $repo_path     = $rabbitmq::params::repo_path,
-  $repo_resource = $rabbitmq::params::package
+  $repo_resource = $rabbitmq::params::package,
+  $key           = 'rabbitmq'
 
 ) inherits rabbitmq::params {
 
