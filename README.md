@@ -6,8 +6,8 @@ Puppet manifest to install and configure rabbitmq
 
 ##Actions:
 
-Install and configure [rabbitmq](http://www.rabbitmq.com/)
-HA support
+* Install and configure [rabbitmq](http://www.rabbitmq.com/)
+* HA support
 
 ##Requires:
 
