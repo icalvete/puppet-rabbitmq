@@ -15,9 +15,6 @@ Puppet manifest to install and configure rabbitmq
 * https://github.com/icalvete/puppet-common but really only need:
   + An http server and a package or use common::down_resource
 
-##TODO:
-
-
 ##Authors:
 
 Israel Calvete Talavera <icalvete@gmail.com>
