@@ -13,25 +13,22 @@ class rabbitmq::install {
   case $::operatingsystem {
     /^(Debian|Ubuntu)$/: {
 
-      exec {'install_erlangs':
-        command => '/usr/bin/apt-get -q -y -o DPkg::Options::=--force-confold install erlang-nox',
-        unless  => '/usr/bin/dpkg -l erlang-nox | grep ii'
+      package{'erlang':
+        ensure  => present
+      }
+
+      package {'erlang-nox':
+        ensure  => present,
+        require => Package['erlang']
       }
 
       exec {'rabbitmq_install_package':
         cwd     => '/tmp/',
         command => "/usr/bin/dpkg -i ${rabbitmq::repo_resource}",
-        require => Common::Down_resource['rabbitmq_get_package'],
-        unless  => '/usr/bin/dpkg -l rabbitmq-server | grep ii'
+        require => [Common::Down_resource['rabbitmq_get_package'], Package['erlang-nox']],
+        unless  => '/usr/bin/dpkg -l rabbitmq-server | grep ii',
+        notify  => Exec['kill_rabbitmq']
       }
-
-      exec {'rabbitmq_install':
-        cwd     => '/tmp/',
-        command => '/usr/bin/apt-get -f install',
-        require => Exec['rabbitmq_install_package'],
-        unless  => '/usr/bin/dpkg -l rabbitmq-server | grep ii'
-      }
-
     }
     /^(CentOS|RedHat)$/: {
 
@@ -41,10 +38,20 @@ class rabbitmq::install {
         cwd     => '/tmp/',
         command => "/bin/rpm -i ${rabbitmq::repo_resource}",
         require => Common::Down_resource['rabbitmq_get_package'],
-        unless  => '/usr/bin/which rabbitmqctl'
+        unless  => '/usr/bin/which rabbitmqctl',
+        notify  => Exec['kill_rabbitmq']
       }
 
     }
+    default :{}
   }
 
+  # Really ugly trick to fix a cluster support issue. Will be changed
+  exec {'kill_rabbitmq':
+    command     => '/bin/ps -u rabbitmq | /bin/grep -v PID | /usr/bin/awk {\'print $1\'} | /usr/bin/xargs /bin/kill -9',
+    user        => 'root',
+    provider    => 'shell',
+    refreshonly => true,
+    returns     => '123'
+  }
 }
