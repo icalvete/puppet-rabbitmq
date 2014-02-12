@@ -35,7 +35,9 @@ class rabbitmq::install {
     }
     /^(CentOS|RedHat)$/: {
 
-      realize Package['erlang']
+      package{'erlang':
+        ensure  => present
+      }
 
       exec {'rabbitmq_install_package':
         cwd     => '/tmp/',
