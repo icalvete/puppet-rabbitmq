@@ -20,4 +20,12 @@ class rabbitmq::config {
     unless      => '/usr/sbin/rabbitmq-plugins list | grep rabbitmq_stomp | grep E',
     environment => 'HOME=/root'
   }
+
+  file { '/etc/rabbitmq/rabbitmq.config':
+    ensure  => present,
+    content => '[{rabbit, [{loopback_users, []}]}].',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+  }
 }
